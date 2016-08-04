@@ -1,0 +1,42 @@
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/variants/standard
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/cores/arduino
+-I/home/callmetim/Dropbox/arduino/research_application/lib/NewliquidCrystal
+-I/home/callmetim/Dropbox/arduino/research_application/lib/NewliquidCrystal/thirdparty libraries/SoftI2CMaster
+-I/home/callmetim/Dropbox/arduino/research_application/lib/NewliquidCrystal/thirdparty libraries/SoftI2CMaster/examples/TSL2561Soft
+-I/home/callmetim/Dropbox/arduino/research_application/lib/NewliquidCrystal/thirdparty libraries/SoftI2CMaster_
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Wire/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Wire/src/utility
+-I/home/callmetim/Dropbox/arduino/research_application/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Bridge/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/EEPROM/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Esplora/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Ethernet/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Firmata
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/GSM/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/HID/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Keyboard/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/LiquidCrystal/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Mouse/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/RobotIRremote/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Robot_Control/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Robot_Motor/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/SD/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/SPI/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Scheduler/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Servo/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/SoftwareSerial/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/SpacebrewYun/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Stepper/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/TFT/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/Temboo/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/USBHost/src
+-I/home/callmetim/.platformio/packages/framework-arduinoavr/libraries/WiFi/src
+-I/home/callmetim/.platformio/packages/toolchain-atmelavr/avr/include
+-I/home/callmetim/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/4.8.1/include-fixed
+-I/home/callmetim/.platformio/packages/toolchain-atmelavr/lib/gcc/avr/4.8.1/include
+-DF_CPU=16000000L
+-DPLATFORMIO=021101
+-DARDUINO_ARCH_AVR
+-DARDUINO_AVR_UNO
+-DARDUINO=10608
+-D__AVR_ATmega328P__
