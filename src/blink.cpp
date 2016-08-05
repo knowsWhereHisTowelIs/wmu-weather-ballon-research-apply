@@ -16,7 +16,7 @@ blinkClass::blinkClass(){
 
 void blinkClass::setup(){
     pinMode(pin, OUTPUT);
-    digitalWrite(pin, HIGH);
+    digitalWrite(pin, LOW);
 }
 
 void blinkClass::loop() {

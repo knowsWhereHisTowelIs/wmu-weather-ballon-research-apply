@@ -18,10 +18,12 @@ More info at: http://goo.gl/kJ8Gl
 Original code improvements to the Ping sketch sourced from Trollmaker.com
 Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robotcar
 */
-char *buffer = new char[50];
+char *sensorsUltrasonicBuffer = new char[50];
 
 sensorsUltrasonicClass::sensorsUltrasonicClass() {
+    // yellow
     trigPin = 12;
+    //orange
     echoPin = 13;
 }
 
@@ -46,8 +48,8 @@ void sensorsUltrasonicClass::loop() {
     duration = pulseIn(echoPin, HIGH);
     // convert the time into a distance
     cm = (duration/2) / 29.1;
-    sprintf(buffer, "Duration:%ld cm:%ld", duration, cm);
-    Serial.println(buffer);
+    sprintf(sensorsUltrasonicBuffer, "Duration:%ld cm:%ld", duration, cm);
+    Serial.println(sensorsUltrasonicBuffer);
     delay(250);
 }
 

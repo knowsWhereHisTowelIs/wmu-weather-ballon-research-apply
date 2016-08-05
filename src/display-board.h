@@ -4,16 +4,17 @@
 
     class displayBoardClass {
         private:
-            //ground - black
-            //vcc - red
-            //sda - yellow - analog 4 (data line)
-            // int sda;
-            //scl - blue - analog 5 ( clock line)
-            // int scl;
+            char rowIndex;
+            char rowCharIndex;
+            char hasDisplayChanged;
         public:
+            char rows[2][16];
             displayBoardClass();
             void setup();
+            void beforeLoop();
             void loop();
+            void afterLoop();
+            void printRows();
     };
 
     extern displayBoardClass displayBoard;

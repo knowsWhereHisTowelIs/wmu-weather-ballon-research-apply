@@ -27,12 +27,23 @@ LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I
 //NONE
 
 displayBoardClass::displayBoardClass() {
+    //ground - black
+    //vcc - red
+    //sda - yellow - analog 4 (data line)
+    // int sda;
+    //scl - blue - analog 5 ( clock line)
+    // int scl;
+
+    //row index for which row to read
+    rowIndex = 0;
+    //0-15 for which character in rows to read
+    rowCharIndex = 0;
+    hasDisplayChanged = 0;
 }
 
 void displayBoardClass::setup() {
     Serial.println("Booting up hello world");
     lcd.begin(16,2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
-
     // ------- Quick 3 blinks of backlight  -------------
     for(int i = 0; i < 2; i++) {
         lcd.backlight();
@@ -41,7 +52,6 @@ void displayBoardClass::setup() {
         delay(100);
     }
     lcd.backlight(); // finish with backlight on
-
     //-------- Write characters on the display ------------------
     // Wait and then tell user they can start the Serial Monitor and type in characters to
     // Display. (Set Serial Monitor option to "No Line Ending")
@@ -52,24 +62,74 @@ void displayBoardClass::setup() {
     lcd.print("Type to display");
 }
 
+void displayBoardClass::beforeLoop() {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    sprintf(rows[0], "Ready for input");
+    lcd.print(rows[0]);
+    lcd.setCursor(0,1);
+    for( int i = 0; i < 16; i++) {
+        rows[1][i] = ' ';
+    }
+    Serial.println("Please type now");
+    rowIndex = 0;
+    rowCharIndex = 0;
+    delay(500);
+}
+
 void displayBoardClass::loop() {
+    // lcd.autoscroll();
+    if( hasDisplayChanged == 1 ) {
+        printRows();
+        hasDisplayChanged = 0;
+    }
+    // when characters arrive over the serial port...
+    if (Serial.available()) {
+        // lcd.print("Waiting for serial message");
+        delay(100); // wait a bit for the entire message to arrive
+        // read all the available characters
+        while (Serial.available() > 0) {
+            // display each character to the LCD
+            char c = Serial.read();
+            if( rowCharIndex > 15 ) {
+                rowCharIndex = 0;
+                rowIndex++;
+            }
+            if( rowIndex > 1 ) {
+                rowIndex = 1;
+            }
+            // if( rowCharIndex == 0 ) {
+            //     for( int i = 1; i < 16; i++) {
+            //         rows[rowIndex][i] = ' ';
+            //     }
+            // }
+
+            if( rowCharIndex == 0 ) {
+                int index = rowIndex == 0 ? 1 : 0;
+                for( int i = 0; i < 16; i ++ ) {
+                    rows[index][i] = rows[1][i];
+                    rows[1][i] = ' ';
+                }
+            }
+
+            rows[rowIndex][rowCharIndex] = c;
+            rowCharIndex++;
+            hasDisplayChanged = 1;
+        }
+    }
+}
+
+void displayBoardClass::afterLoop() {
+
+}
+
+void displayBoardClass::printRows() {
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("LCD LOOP");
-    // // when characters arrive over the serial port...
-    // lcd.autoscroll();
-    // if (Serial.available()) {
-    //     // wait a bit for the entire message to arrive
-    //     delay(100); //slow down if want to not wait for entire string
-    //     // clear the screen
-    //     //lcd.clear();
-    //     // read all the available characters
-    //     while (Serial.available() > 0) {
-    //         // display each character to the LCD
-    //         char c = Serial.read();
-    //         lcd.write(c);
-    //     }
-    // }
+    lcd.print(rows[0]);
+    lcd.setCursor(0,1);
+    lcd.print(rows[1]);
+    delay(100);
 }
 
 displayBoardClass displayBoard = displayBoardClass();
