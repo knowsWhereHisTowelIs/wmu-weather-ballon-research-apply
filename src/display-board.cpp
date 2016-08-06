@@ -21,6 +21,7 @@ Part: QAPASS 1602A
 // set the LCD address to 0x27 for a 16 chars 2 line display
 // A FEW use address 0x3F
 // Set the pins on the I2C chip used for LCD connections:
+//LiquidCrystal_I2C lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin,BACKLIGHT_PIN,POSITIVE);
 //                    addr, en,rw,rs,d4,d5,d6,d7,bl,blpol
 LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
 /*-----( Declare Variables )-----*/
@@ -29,19 +30,32 @@ LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I
 displayBoardClass::displayBoardClass() {
     //ground - black
     //vcc - red
+    // A4 and A5 are arduinos analog pins
     //sda - yellow - analog 4 (data line)
     // int sda;
     //scl - blue - analog 5 ( clock line)
     // int scl;
-
     //row index for which row to read
     rowIndex = 0;
     //0-15 for which character in rows to read
     rowCharIndex = 0;
     hasDisplayChanged = 0;
+
+    for( int i = 0; i < 2; i++ ) {
+        for ( int j = 0; j < 16; j++ ) {
+            rows[i][j] = ' ';
+            previousRows[i][j] = ' ';
+        }
+    }
+    rows[0][16] = '\0';
+    rows[1][16] = '\0';
+
+    previousRows[0][16] = '\0';
+    previousRows[1][16] = '\0';
 }
 
-void displayBoardClass::setup() {
+void displayBoardClass::setup(char *buff){
+    buffer = buff;
     Serial.println("Booting up hello world");
     lcd.begin(16,2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
     // ------- Quick 3 blinks of backlight  -------------
@@ -52,29 +66,21 @@ void displayBoardClass::setup() {
         delay(100);
     }
     lcd.backlight(); // finish with backlight on
-    //-------- Write characters on the display ------------------
-    // Wait and then tell user they can start the Serial Monitor and type in characters to
-    // Display. (Set Serial Monitor option to "No Line Ending")
-    lcd.clear();
-    lcd.setCursor(0,0); //Start at character 0 on line 0
-    lcd.print("Use Serial Mon");
-    lcd.setCursor(0,1);
-    lcd.print("Type to display");
 }
 
 void displayBoardClass::beforeLoop() {
     lcd.clear();
-    lcd.setCursor(0,0);
-    sprintf(rows[0], "Ready for input");
-    lcd.print(rows[0]);
-    lcd.setCursor(0,1);
-    for( int i = 0; i < 16; i++) {
-        rows[1][i] = ' ';
-    }
-    Serial.println("Please type now");
+    sprintf(rows[0], "----- LCD! -----");
+    sprintf(rows[1], "Ready for input!");
+    Serial.println("LCD ready for input!");
+    printRows();
+
     rowIndex = 0;
     rowCharIndex = 0;
-    delay(500);
+    delay(1000);
+    sprintf(rows[0], "                ");
+    sprintf(rows[1], "                ");
+    lcd.clear();
 }
 
 void displayBoardClass::loop() {
@@ -93,23 +99,13 @@ void displayBoardClass::loop() {
             char c = Serial.read();
             if( rowCharIndex > 15 ) {
                 rowCharIndex = 0;
-                rowIndex++;
-            }
-            if( rowIndex > 1 ) {
-                rowIndex = 1;
-            }
-            // if( rowCharIndex == 0 ) {
-            //     for( int i = 1; i < 16; i++) {
-            //         rows[rowIndex][i] = ' ';
-            //     }
-            // }
-
-            if( rowCharIndex == 0 ) {
-                int index = rowIndex == 0 ? 1 : 0;
-                for( int i = 0; i < 16; i ++ ) {
-                    rows[index][i] = rows[1][i];
-                    rows[1][i] = ' ';
+                if( rowIndex == 1 ) {
+                    for( int i = 0; i < 16; i ++ ) {
+                        rows[0][i] = rows[1][i];
+                        rows[1][i] = ' ';
+                    }
                 }
+                rowIndex = 1;
             }
 
             rows[rowIndex][rowCharIndex] = c;
@@ -124,12 +120,32 @@ void displayBoardClass::afterLoop() {
 }
 
 void displayBoardClass::printRows() {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(rows[0]);
-    lcd.setCursor(0,1);
-    lcd.print(rows[1]);
-    delay(100);
+    hasDisplayChanged = 0;
+    for(int i = 0; i < 2; i++ ) {
+        for( int j = 0; j < 16; j++ ) {
+            if( rows[i][j] != previousRows[i][j] ) {
+                hasDisplayChanged = 1;
+                break;
+            }
+        }
+        if( hasDisplayChanged == 1 ) {
+            break;
+        }
+    }
+    if( hasDisplayChanged == 1 ) {
+        lcd.clear();
+        for(int i = 0; i < 2; i++ ) {
+            // lcd.setCursor(0, i);
+            for( int j = 0; j < 16; j++ ) {
+                // lcd.write(rows[i][j]);
+                previousRows[i][j] = rows[i][j];
+            }
+        }
+        lcd.print(rows[0]);
+        lcd.setCursor(0,1);
+        lcd.print(rows[1]);
+        delay(100);
+    }
 }
 
 displayBoardClass displayBoard = displayBoardClass();

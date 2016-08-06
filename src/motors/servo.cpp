@@ -18,8 +18,9 @@ motorsServoClass::motorsServoClass() {
     servoPin = 8;
 }
 
-void motorsServoClass::setup() {
-    //do nothing
+void motorsServoClass::setup(char *buff, char rows[][17]){
+    buffer = buff;
+    lcdRows = rows;
 }
 
 void motorsServoClass::beforeLoop() {
@@ -37,6 +38,8 @@ void motorsServoClass::loop() {
 Keep keep servo in same place
 **/
 void motorsServoClass::knobLoop() {
+    sprintf(lcdRows[0], "---SERVO KNOB---");
+    sprintf(lcdRows[1], "Resists Movement");
     // sets the servo position according to the scaled value
     servo.write(position);
     //wait for servo to get to new position
@@ -47,6 +50,8 @@ void motorsServoClass::knobLoop() {
 sweep
 **/
 void motorsServoClass::sweepLoop() {
+    sprintf(lcdRows[0], "---SERVO Sweep--");
+    sprintf(lcdRows[1], "Sweeps angles   ");
     // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     for (position = 0; position <= 180; position += 1) {

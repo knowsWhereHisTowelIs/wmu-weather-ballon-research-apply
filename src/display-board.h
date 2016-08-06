@@ -7,10 +7,13 @@
             char rowIndex;
             char rowCharIndex;
             char hasDisplayChanged;
+            char previousRows[2][17];
+            //buffer for serial communication
+            char *buffer;
         public:
-            char rows[2][16];
+            char rows[2][17];
             displayBoardClass();
-            void setup();
+            void setup(char *buff);
             void beforeLoop();
             void loop();
             void afterLoop();

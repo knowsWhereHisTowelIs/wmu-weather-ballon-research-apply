@@ -9,9 +9,13 @@
             int sensorState;
             int sensorStatePin; // maybe remove?
             double temp;
+            //buffer for serial communication
+            char *buffer;
+            //what to display to lcd
+            char (*lcdRows)[17];
         public:
             sensorsTemperatureClass();
-            void setup();
+            void setup(char *buff, char rows[][17]);
             void activate();
             void loop();
             void deactivate();

@@ -6,9 +6,13 @@
         private:
             int trigPin;
             int echoPin;
+            //buffer for serial communication
+            char *buffer;
+            //what to display to lcd
+            char (*lcdRows)[17];
         public:
             sensorsUltrasonicClass();
-            void setup();
+            void setup(char *buff, char rows[][17]);
             void loop();
     };
 

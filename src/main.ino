@@ -3,8 +3,8 @@
 /***************************INCLUDES***************************************/
 #include "Arduino.h"
 //---custom---
-#include "blink.h"
 #include "display-board.h"
+#include "blink.h"
 #include "sensors/ultrasonic.h"
 #include "sensors/temperature.h"
 #include "motors/servo.h"
@@ -13,17 +13,21 @@
 Accomplishments:
 Serial communication both ways (shown in LCD)
 LED blinking
-Distance sensors
+LED PWM
+temperature sensor
+Distance sensor
 Switch sensing
 LCD display
+Servo resist movement
+Servo sweep
 **/
 
 // ---- main vars----------
-int pushPin = 10;
+int pushPin = 11;
 int pushPinVal;
-int action = 4;
+int action = 0;
 char hasSwitchedAction = 0;
-extern char *buffer = new char[32];
+char *buffer = new char[32];
 
 /**************************SETUP*****************************/
 void setup() {
@@ -39,11 +43,13 @@ void setup() {
     pinMode(pushPin, INPUT);      // sets the digital pin 7 as input
 
     //setup modules
-    blink.setup();
-    displayBoard.setup();
-    sensorsUltrasonic.setup();
-    sensorsTemperature.setup();
-    motorsServo.setup();
+    // blink.setup(buffer);//, displayBoard.rows);
+    // blink.test( (char **) displayBoard.rows);
+    displayBoard.setup(buffer);
+    blink.setup(buffer, displayBoard.rows);
+    sensorsUltrasonic.setup(buffer, displayBoard.rows);
+    sensorsTemperature.setup(buffer, displayBoard.rows);
+    motorsServo.setup(buffer, displayBoard.rows);
 }
 
 /**************************LOOP***************************/
@@ -54,6 +60,7 @@ void loop() {
         while( pushPinVal == 1 ) {
             pushPinVal = digitalRead(pushPin);   // read the input pin
             blink.actionChange();
+            displayBoard.printRows();
         }
         action++;
         sprintf(buffer, "Change of action to:%d", action);
@@ -63,40 +70,50 @@ void loop() {
         hasSwitchedAction = 0;
     }
 
+    // Serial.println("\nBEFORE");
+    // Serial.println(action);
+    // Serial.println(displayBoard.rows[0]);
+    // Serial.println(displayBoard.rows[1]);
+    // delay(100);
+    displayBoard.printRows();
+    // Serial.println("AFTER\n");
+    // delay(100);
+
     switch(action) {
         case 0:
         blink.loop();
         break;
 
         case 1:
+        blink.pwmBrightness();
+        break;
+
+        case 2:
         if( hasSwitchedAction == 1 ) {
             displayBoard.beforeLoop();
         }
         displayBoard.loop();
         break;
 
-        case 2:
+        case 3:
         if( hasSwitchedAction == 1 ) {
             displayBoard.afterLoop();
         }
         sensorsUltrasonic.loop();
         break;
 
-        case 3:
+        case 4:
         sensorsTemperature.loop();
-        sprintf(displayBoard.rows[0], "TEMP F:%d", (int) sensorsTemperature.getFahrenheit());
-        sprintf(displayBoard.rows[1], "K:%d C:%d", (int) sensorsTemperature.getKelvin(), (int) sensorsTemperature.getCelcius());
-        displayBoard.printRows();
         break;
 
-        case 4:
+        case 5:
         if( hasSwitchedAction == 1 ) {
             motorsServo.beforeLoop();
         }
         motorsServo.knobLoop();
         break;
 
-        case 5:
+        case 6:
         if( hasSwitchedAction == 1 ) {
             motorsServo.afterLoop();
             motorsServo.beforeLoop();
@@ -104,13 +121,17 @@ void loop() {
         motorsServo.sweepLoop();
         break;
 
-        case 6:
+        case 7:
         if( hasSwitchedAction == 1 ) {
             motorsServo.afterLoop();
         }
         break;
 
         default:
+        sprintf(displayBoard.rows[0], "END OF ACTIONS");
+        sprintf(displayBoard.rows[1], "Action = 0");
+        Serial.println("Action = 0");
+        delay(500);
         action = 0;
         break;
     }

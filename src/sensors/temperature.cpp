@@ -10,18 +10,16 @@ http://playground.arduino.cc/ComponentLib/Thermistor2
 https://www.youtube.com/watch?v=9RO03TIiSDU&list=PLwnMi_b_qu7vx6f608858Q0LxaSahfXau&index=18
 **/
 
-//todo delete
-char* temperatureBuffer = new char[32];
-char doubleTmp[6];
-
 sensorsTemperatureClass::sensorsTemperatureClass() {
     // blue
-    sensorPin = A3;// select the input pin for the potentiometer
+    sensorPin = A0;// select the input pin for the potentiometer
     // yellow
-    sensorStatePin = 9;
+    sensorStatePin = 10;
 }
 
-void sensorsTemperatureClass::setup() {
+void sensorsTemperatureClass::setup(char *buff, char rows[][17]){
+    buffer = buff;
+    lcdRows = rows;
     pinMode(sensorStatePin, INPUT);
 }
 
@@ -37,7 +35,10 @@ void sensorsTemperatureClass::loop() {
     } else {
         rawAnalog = -1;
     }
-    delay(200);
+    //print and limit ints to 3 chars
+    sprintf(lcdRows[0], "--TEMP F:%03d--", ((int) getFahrenheit()) % 1000);
+    sprintf(lcdRows[1], "---K:%03d C:%03d--", ((int) getKelvin()) % 1000, ((int) getCelcius()) % 1000);
+    delay(100);
 }
 
 void sensorsTemperatureClass::deactivate() {

@@ -18,16 +18,17 @@ More info at: http://goo.gl/kJ8Gl
 Original code improvements to the Ping sketch sourced from Trollmaker.com
 Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robotcar
 */
-char *sensorsUltrasonicBuffer = new char[50];
 
 sensorsUltrasonicClass::sensorsUltrasonicClass() {
+    // orange
+    trigPin = 13;
     // yellow
-    trigPin = 12;
-    //orange
-    echoPin = 13;
+    echoPin = 12;
 }
 
-void sensorsUltrasonicClass::setup() {
+void sensorsUltrasonicClass::setup(char *buff, char rows[][17]){
+    buffer = buff;
+    lcdRows = rows;
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
 }
@@ -48,8 +49,12 @@ void sensorsUltrasonicClass::loop() {
     duration = pulseIn(echoPin, HIGH);
     // convert the time into a distance
     cm = (duration/2) / 29.1;
-    sprintf(sensorsUltrasonicBuffer, "Duration:%ld cm:%ld", duration, cm);
-    Serial.println(sensorsUltrasonicBuffer);
+    sprintf(lcdRows[0], "---ULTRASONIC---");
+    //print and limit to 3 chars
+    sprintf(lcdRows[1], "Dur:%03d CM:%03d", ((int) duration) % 1000, ((int) cm) % 1000);
+    //also print more precisly to usb
+    sprintf(buffer, "Duration:%ld cm:%ld", duration, cm);
+    Serial.println(buffer);
     delay(250);
 }
 
